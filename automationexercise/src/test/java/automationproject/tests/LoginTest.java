@@ -5,14 +5,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 
 import automationproject.pages.CartPage;
 import automationproject.pages.HomePage;
 import automationproject.pages.LoginPage;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-
 
 public class LoginTest extends BaseTest{
    private static String homeUrl = "https://automationexercise.com/";
@@ -23,13 +21,14 @@ public class LoginTest extends BaseTest{
       driver.get(homeUrl);
       WebDriverWait wait = new WebDriverWait(driver, 60);
       wait.until(ExpectedConditions.jsReturnsValue("return document.readyState == 'complete'"));
-      homePage = new HomePage(driver);
-      loginPage = new LoginPage(driver);
-      cartPage = new CartPage(driver);
    }
 
    @Test(dataProvider = "credentials")
    public void testLogin(String email, String password){
+      homePage = new HomePage(driver);
+      loginPage = new LoginPage(driver);
+      cartPage = new CartPage(driver);
+
       //assert title:
       String title = driver.getTitle();
       Assert.assertEquals(title, "Automation Exercise");

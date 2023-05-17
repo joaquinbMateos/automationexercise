@@ -7,6 +7,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 import automationproject.pages.CartPage;
+import automationproject.pages.CheckoutPage;
 import automationproject.pages.HomePage;
 import automationproject.pages.LoginPage;
 
@@ -15,6 +16,7 @@ public abstract class BaseTest {
     protected static HomePage homePage;
     protected static LoginPage loginPage;
     protected static CartPage cartPage;
+    protected static CheckoutPage checkoutPage;
 
     @BeforeClass
     public void setup() {

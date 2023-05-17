@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 
 import automationproject.pages.CartPage;
+import automationproject.pages.CheckoutPage;
 import automationproject.pages.HomePage;
 import automationproject.pages.LoginPage;
 
@@ -23,16 +24,17 @@ public class CheckoutTest extends BaseTest{
 
    @BeforeMethod
    public void setUp(){
-      driver.get(homeUrl);
       WebDriverWait wait = new WebDriverWait(driver, 60);
       wait.until(ExpectedConditions.jsReturnsValue("return document.readyState == 'complete'"));
       homePage = new HomePage(driver);
       loginPage = new LoginPage(driver);
       cartPage = new CartPage(driver);
+      checkoutPage = new CheckoutPage(driver);
    }
 
    @Test(dataProvider = "credentials", priority = 0)
    public void testLogin(String email, String password) {
+      driver.get(homeUrl);
       //assert title:
       String title = driver.getTitle();
       Assert.assertEquals(title, "Automation Exercise");
@@ -56,7 +58,7 @@ public class CheckoutTest extends BaseTest{
    }
 
    @Test(priority = 1)
-   public void checkoutExecution(){
+   public void addProductToCart(){
       JavascriptExecutor js = (JavascriptExecutor) driver;
       //assert title:
       String title = driver.getTitle();
@@ -81,16 +83,29 @@ public class CheckoutTest extends BaseTest{
       homePage.clickViewCart();
       String actualUrl = driver.getCurrentUrl(); 
       Assert.assertEquals(actualUrl, cartUrl);
-      //checkout:
-      cartPage.clickCheckout();
-      actualUrl = driver.getCurrentUrl(); 
-      Assert.assertEquals(actualUrl, checkoutUrl);
    }
 
+   @Test(dataProvider = "addressInfo" ,priority = 2)
+   public void checkoutProduct(String name, String address, String city, String country, String phone){
+     //checkout:
+     cartPage.clickCheckout();
+     String actualUrl = driver.getCurrentUrl(); 
+     Assert.assertEquals(actualUrl, checkoutUrl);
+     checkoutPage.assertAddress(name, address, city, country, phone);
+   }
+
+   //DataProviders:
    @DataProvider(name = "credentials")
       public Object[][] getCredentials() {
          return new Object[][]{
                 {"test@automation.com", "seleniumjava"},
+      };
+   }
+
+   @DataProvider(name = "addressInfo")
+      public Object[][] getAddressInfo() {
+         return new Object[][]{
+                {"Mr. Test Automation", "selenium", "City State 011", "United States", "123456789"},
       };
    }
 }
