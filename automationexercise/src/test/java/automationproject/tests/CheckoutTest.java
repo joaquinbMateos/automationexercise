@@ -34,6 +34,8 @@ public class CheckoutTest extends BaseTest{
 
    @Test(dataProvider = "credentials", priority = 0)
    public void testLogin(String email, String password) {
+      homePage = new HomePage(driver);
+      loginPage = new LoginPage(driver);
       driver.get(homeUrl);
       //assert title:
       String title = driver.getTitle();
@@ -57,12 +59,11 @@ public class CheckoutTest extends BaseTest{
       Assert.assertTrue(loggedUser.isDisplayed());
    }
 
-   @Test(priority = 1)
+   @Test(dependsOnMethods = "testLogin")
    public void addProductToCart(){
+      homePage = new HomePage(driver);
+      cartPage = new CartPage(driver);
       JavascriptExecutor js = (JavascriptExecutor) driver;
-      //assert title:
-      String title = driver.getTitle();
-      Assert.assertEquals(title, "Automation Exercise");
       //scroll down to product:
       WebElement firstProduct = homePage.getFirstProduct();
       js.executeScript("arguments[0].scrollIntoView(true);", firstProduct);
@@ -83,12 +84,13 @@ public class CheckoutTest extends BaseTest{
       homePage.clickViewCart();
       String actualUrl = driver.getCurrentUrl(); 
       Assert.assertEquals(actualUrl, cartUrl);
+      cartPage.clickCheckout();
    }
 
-   @Test(dataProvider = "addressInfo" ,priority = 2)
+   @Test(dataProvider = "addressInfo" , dependsOnMethods = "addProductToCart")
    public void checkoutProduct(String name, String address, String city, String country, String phone){
+     checkoutPage = new CheckoutPage(driver);
      //checkout:
-     cartPage.clickCheckout();
      String actualUrl = driver.getCurrentUrl(); 
      Assert.assertEquals(actualUrl, checkoutUrl);
      checkoutPage.assertAddress(name, address, city, country, phone);
